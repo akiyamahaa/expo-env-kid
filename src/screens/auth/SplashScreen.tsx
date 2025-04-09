@@ -15,7 +15,6 @@ type Props = {} & NativeStackScreenProps<RootStackParams, "SplashScreen">;
 
 const SplashScreen = (props: Props) => {
   const { navigation } = props;
-  const [num, setNum] = useState(0);
 
   const onNext = () => {
     navigation.navigate("TabNavigation");

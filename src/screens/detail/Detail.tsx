@@ -1,19 +1,21 @@
-import { StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
+import {
+  StyleSheet,
+  Animated,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import {
   Box,
-  Button,
-  ButtonIcon,
+  VStack,
+  Text,
   HStack,
   Image,
   ImageBackground,
   SafeAreaView,
-  ScrollView,
-  Text,
-  VStack,
 } from "@gluestack-ui/themed";
-import { StatusBar } from "expo-status-bar";
 import { ArrowLeft2 } from "iconsax-react-native";
+import { StatusBar } from "expo-status-bar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParams } from "../../navigations/config";
 import { allData } from "../../db/slide-data";
@@ -23,74 +25,107 @@ type Props = {} & NativeStackScreenProps<RootStackParams, "Detail">;
 
 const Detail = ({ navigation, route }: Props) => {
   const { id, type } = route.params;
-  const [data] = useState<IData>(allData[type][id] as any);
+  const data: any = allData[type][id];
 
-  if (!data) {
-    return null;
-  }
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(40)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  if (!data) return null;
 
   return (
-    <Box flex={1}>
+    <Box flex={1} bg="#F8FAFC">
       <StatusBar style="light" />
-      <ImageBackground source={data.image} w="$full" height={240}>
-        <SafeAreaView>
-          <HStack>
-            <Button
-              variant="link"
-              size="lg"
-              px="$2"
-              onPress={() => navigation.goBack()}
-            >
-              <ButtonIcon as={ArrowLeft2} size="xl" color="$white" />
-            </Button>
-          </HStack>
-        </SafeAreaView>
-      </ImageBackground>
-      <ScrollView>
-        {/* Content */}
-        <VStack p="$4" gap="$4">
-          {/* Overview */}
-          <VStack gap="$2">
-            <Text color="$primary600" fontSize={"$xl"} fontWeight={"$bold"}>
-              {data.title}
-            </Text>
-            <Text color="$coolGray800" fontSize={"$md"} lineHeight={24}>
-              {data.description}
-            </Text>
-          </VStack>
-          {data.content.map((contentPart, idx) => (
-            <VStack gap="$2" key={`${contentPart.title}-${idx}`}>
-              <Text
-                color="$primary600"
-                fontSize={"$lg"}
-                fontWeight={"$semibold"}
-              >
-                {contentPart.title}
+      {/* Hero Image */}
+      <Box style={styles.heroContainer}>
+        <ImageBackground source={data.image} style={styles.heroImage}>
+          <Box style={styles.overlay} />
+          <SafeAreaView>
+            <HStack px={20} pt={20}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <ArrowLeft2 size={28} color="#fff" />
+              </TouchableOpacity>
+            </HStack>
+            <VStack px={20} mt={40} mb={20}>
+              <Text fontSize="$2xl" fontWeight="bold" color="$white">
+                {data.title}
               </Text>
+              <Text color="$coolGray100" fontSize="$sm" mt="$1">
+                Tài liệu học tập trực quan
+              </Text>
+            </VStack>
+          </SafeAreaView>
+        </ImageBackground>
+      </Box>
+
+      {/* Content */}
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+            padding: 20,
+          }}
+        >
+          <Text fontSize="$md" color="$coolGray700" lineHeight={24} mb="$4">
+            {data.description}
+          </Text>
+
+          {/* Các phần nội dung */}
+          {data.content.map((section: any, idx: number) => (
+            <VStack gap="$2" key={`${section.title}-${idx}`} mb="$6">
+              <Text
+                fontSize="$lg"
+                fontWeight="bold"
+                color="$primary600"
+                mb="$2"
+              >
+                {section.title}
+              </Text>
+
+              {/* Ảnh minh họa nếu có */}
+              {section.image && (
+                <Image
+                  source={section.image}
+                  w="$full"
+                  h={200}
+                  borderRadius={12}
+                  resizeMode="cover"
+                  mb="$3"
+                  alt="section-img"
+                />
+              )}
+
+              {/* Nội dung từng đoạn */}
               <VStack gap="$2">
-                {contentPart.image && (
-                  <Image
-                    source={contentPart.image}
-                    w="$full"
-                    alt="image"
-                    height={200}
-                    resizeMode="contain"
-                  />
-                )}
-                {contentPart.body.map((elm) => (
+                {section.body.map((para: any, i: number) => (
                   <Text
-                    key={elm}
+                    key={i}
+                    fontSize="$md"
                     color="$coolGray800"
-                    fontSize={"$md"}
                     lineHeight={24}
                   >
-                    {elm}
+                    {para}
                   </Text>
                 ))}
               </VStack>
             </VStack>
           ))}
-        </VStack>
+        </Animated.View>
       </ScrollView>
     </Box>
   );
@@ -98,4 +133,24 @@ const Detail = ({ navigation, route }: Props) => {
 
 export default Detail;
 
-const styles = StyleSheet.create({});
+// -------------------------- Style --------------------------
+const styles = StyleSheet.create({
+  heroContainer: {
+    height: 250,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: "hidden",
+  },
+  heroImage: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  overlay: {
+    position: "absolute",
+    backgroundColor: "rgba(0,0,0,0.35)",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});

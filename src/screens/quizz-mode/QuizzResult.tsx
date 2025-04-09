@@ -1,20 +1,7 @@
-import {
-  Dimensions,
-  StyleSheet,
-  Platform,
-  StatusBar,
-  TouchableOpacity,
-} from "react-native";
-import React from "react";
-import { Box, Image, Text, VStack, View } from "@gluestack-ui/themed";
+import { Platform, StatusBar, TouchableOpacity, Animated } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Box, Image, Text, VStack, HStack, Center } from "@gluestack-ui/themed";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { quizzData } from "../../db/quizz";
-
-const show: { [key: string]: string } = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
 
 enum EResultType {
   GOOD,
@@ -23,15 +10,17 @@ enum EResultType {
 
 const RETURN_RESULT = {
   [EResultType.GOOD]: {
-    title: "Xin chúc mừng!",
-    description: "Bạn đã trả lời đúng",
-    color: "#16A34A",
+    title: "🎉 Làm tốt lắm!",
+    description: "Bạn hiểu rõ chủ đề này rồi!",
+    color: "#10B981", // xanh ngọc
+    bgColor: "#ECFDF5",
     logo: require("../../assets/good_logo.png"),
   },
   [EResultType.BAD]: {
-    title: "Rất tiếc!",
-    description: "Bạn không trả lời đúng câu nào",
-    color: "#EF4444",
+    title: "😕 Ôi không!",
+    description: "Cần cố gắng hơn ở lần tới nhé!",
+    color: "#F97316", // cam
+    bgColor: "#FFF7ED",
     logo: require("../../assets/bad_logo.png"),
   },
 };
@@ -40,122 +29,127 @@ const QuizzResult = () => {
   const route = useRoute<any>();
   const { point, length } = route.params;
   const navigation = useNavigation<any>();
-  let result = point > length / 2 ? EResultType.GOOD : EResultType.BAD;
+
+  const result = point > length / 2 ? EResultType.GOOD : EResultType.BAD;
+  const numWrong = length - point;
+
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: (point / length) * 100,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+  }, []);
 
   return (
     <VStack
       flex={1}
-      bg="$white"
-      justifyContent="center"
+      bg={RETURN_RESULT[result].bgColor}
+      justifyContent="space-between"
       alignItems="center"
-      px={"$12"}
-      gap={"$3"}
+      px="$6"
+      py="$8"
     >
-      {Platform.OS == "android" && <StatusBar barStyle="light-content" />}
-      <Image source={RETURN_RESULT[result].logo} alt="logo" />
-      <VStack gap={"$1"}>
+      {Platform.OS === "android" && <StatusBar barStyle="dark-content" />}
+
+      {/* Header logo */}
+      <Image
+        source={RETURN_RESULT[result].logo}
+        alt="result"
+        w={180}
+        h={180}
+        resizeMode="contain"
+      />
+
+      {/* Nội dung kết quả */}
+      <VStack alignItems="center" space="md">
         <Text
-          textAlign="center"
-          fontWeight="700"
-          fontSize={"$3xl"}
-          color="$coolGray800"
+          fontSize="$3xl"
+          fontWeight="800"
+          color={RETURN_RESULT[result].color}
         >
           {RETURN_RESULT[result].title}
         </Text>
-        <Text textAlign="center" fontSize={"$md"} color="$coolGray800">
+        <Text fontSize="$md" color="$textDark700" textAlign="center">
           {RETURN_RESULT[result].description}
         </Text>
+
+        {/* Vòng tròn điểm số (hiệu ứng hiện đại) */}
+        <Animated.View
+          style={{
+            width: 160,
+            height: 160,
+            borderRadius: 80,
+            backgroundColor: "#ffffff",
+            justifyContent: "center",
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 5,
+            marginTop: 20,
+          }}
+        >
+          <Text fontSize="$lg" color="$coolGray500" mb="$1">
+            Kết quả của bạn
+          </Text>
+          <Text
+            fontSize="$5xl"
+            fontWeight="900"
+            color={RETURN_RESULT[result].color}
+          >
+            {point}/{length}
+          </Text>
+        </Animated.View>
       </VStack>
-      <Text
-        textAlign="center"
-        fontWeight="700"
-        fontSize="$3xl"
-        color={RETURN_RESULT[result].color}
-      >
-        {route.params.point}/{route.params.length}
-      </Text>
+
+      {/* Thống kê phụ */}
+      <HStack mt="$8" space="lg">
+        <StatBox label="✅ Đúng" value={point} color="#22C55E" />
+        <StatBox label="❌ Sai" value={numWrong} color="#EF4444" />
+      </HStack>
+
+      {/* Nút tiếp tục */}
       <TouchableOpacity onPress={() => navigation.navigate("Quizz")}>
-        <Box bgColor="#3758F9" py={"$2.5"} px={"$8"} rounded={"$xl"}>
-          <Text color="$white">Tiếp tục học</Text>
+        <Box bgColor="#3B82F6" py="$3.5" px="$10" rounded="$xl" mt="$10">
+          <Text color="$white" fontWeight="700" fontSize="$md">
+            🚀 Tiếp tục học
+          </Text>
         </Box>
       </TouchableOpacity>
-      {/* 
-      <Box>
-        <View style={styles.box__score}>
-          <View style={[styles.ques, styles.ques__total]}>
-            <Text style={styles.ques__num}>{route.params.length}</Text>
-            <Text>question</Text>
-          </View>
-          <View style={[styles.ques, styles.ques__true]}>
-            <Text style={[styles.ques__num, styles.text__white]}>
-              {route.params.point}
-            </Text>
-            <Text style={styles.text__white}>true</Text>
-          </View>
-          <View style={[styles.ques, styles.ques__false]}>
-            <Text style={[styles.ques__num, styles.text__white]}>
-              {route.params.length - route.params.point}
-            </Text>
-            <Text style={styles.text__white}>false</Text>
-          </View>
-        </View>
-
-      </Box> */}
     </VStack>
   );
 };
 
 export default QuizzResult;
 
-const styles = StyleSheet.create({
-  text__main: {
-    fontSize: 30,
-    fontWeight: "bold",
-    marginTop: 50,
-  },
-  text__level: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 5,
-    marginBottom: 20,
-  },
-  text__comment: {
-    fontSize: 40,
-    fontWeight: "bold",
-    color: "#3D7944",
-  },
-  text__score: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#3D7944",
-    marginTop: 10,
-  },
-  box__score: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  ques: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 5,
-  },
-  ques__total: {
-    backgroundColor: "#F7D46B",
-  },
-  ques__true: {
-    backgroundColor: "#3D7944",
-  },
-  ques__false: {
-    backgroundColor: "#D00809",
-  },
-  ques__num: {
-    fontSize: 35,
-    fontWeight: "bold",
-  },
-  text__white: {
-    color: "#FFFFFF",
-  },
-});
+// Component nhỏ hiển thị thống kê
+const StatBox = ({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) => {
+  return (
+    <Center
+      w={100}
+      h={100}
+      borderRadius={20}
+      bg={color}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Text fontSize="$2xl" fontWeight="bold" color="#fff">
+        {value}
+      </Text>
+      <Text fontSize="$sm" color="#fff">
+        {label}
+      </Text>
+    </Center>
+  );
+};

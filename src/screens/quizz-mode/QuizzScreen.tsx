@@ -1,8 +1,16 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { Button, Text, Image, Box, View, VStack } from "@gluestack-ui/themed";
-import React, { useLayoutEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
+import { Animated, Dimensions } from "react-native";
+import {
+  Button,
+  Text,
+  Image,
+  Box,
+  VStack,
+  ScrollView,
+  HStack,
+  Progress,
+} from "@gluestack-ui/themed";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { quizzData } from "../../db/quizz";
 import TextBox, { EStatus } from "../../components/common/TextBox";
 import { getRandomArray } from "../../utils/function";
@@ -30,34 +38,26 @@ const QuizzScreen = () => {
 
   const onPress = (i: number) => () => {
     const { ans } = quizzes[currQues];
-    const newStatus = [...status];
-    for (let index = 0; index < newStatus.length; index++) {
-      newStatus[index] = EStatus.DISABLE;
-    }
-    if (i == ans) {
+    const newStatus = [...status].map(() => EStatus.DISABLE);
+    if (i === ans) {
       newStatus[i] = EStatus.CORRECT;
       setPoint(point + 1);
     } else {
       newStatus[ans] = EStatus.CORRECT;
       newStatus[i] = EStatus.IN_CORRECT;
     }
-    setNext(true);
     setStatus(newStatus);
+    setNext(true);
   };
 
   const onNext = () => {
     if (currQues < quizzes.length - 1) {
       setCurrQues(currQues + 1);
       setNext(false);
-
-      const newStatus = [...status];
-      for (let index = 0; index < newStatus.length; index++) {
-        newStatus[index] = EStatus.NORMAL;
-      }
-      setStatus(newStatus);
+      setStatus([EStatus.NORMAL, EStatus.NORMAL, EStatus.NORMAL]);
     } else {
       navigation.navigate("QuizzResult", {
-        level: level,
+        level,
         point,
         length: quizzes.length,
       });
@@ -70,88 +70,110 @@ const QuizzScreen = () => {
     });
   }, []);
 
+  const screenWidth = Dimensions.get("screen").width;
+
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: ((currQues + 1) / quizzes.length) * 100,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [currQues]);
+
   return (
-    <VStack flex={1} justifyContent="space-between" bg="$white">
-      <VStack gap={"$6"}>
+    <ScrollView flex={1} bg="#EAF6EF" px="$4" py="$4">
+      {/* Tiến trình câu hỏi */}
+      <HStack
+        alignItems="center"
+        justifyContent="space-between"
+        mb="$2"
+        px="$2"
+      >
+        <Text fontSize="$sm" color="$textDark500">
+          Câu {currQues + 1}/{quizzes.length}
+        </Text>
+        <Text fontSize="$sm" color="$emerald700" fontWeight="bold">
+          Điểm: {point}
+        </Text>
+      </HStack>
+      {/* Progress bar với animation */}
+      <Box height={8} bg="#D1FAE5" borderRadius={8} overflow="hidden" mb="$4">
+        <Animated.View
+          style={{
+            height: 8,
+            backgroundColor: "#10B981",
+            width: progressAnim.interpolate({
+              inputRange: [0, 100],
+              outputRange: ["0%", "100%"],
+            }),
+            borderRadius: 8,
+          }}
+        />
+      </Box>
+
+      {/* Ảnh minh họa */}
+      <Box borderRadius={16} overflow="hidden" mb="$4" bg="$white">
         <Image
-          alt="img-ques"
-          w={"$full"}
-          height={Math.round(
-            (159 / 290) * Math.round(0.8 * Dimensions.get("screen").width)
-          )}
+          alt="quiz-img"
+          w="$full"
+          h={Math.round((159 / 290) * screenWidth)}
           source={quizzes[currQues].image}
         />
-        <VStack px="$12" gap="$10">
-          <Text
-            color="$textDark900"
-            fontWeight="600"
-            fontSize={"$md"}
-            w={"$full"}
-            textAlign="center"
-          >
-            {quizzes[currQues].ques}
-          </Text>
-          <Box w={"$full"} gap={"$4"}>
-            {quizzes[currQues].choose.map((item: string, i: number) => (
-              <TextBox
-                key={`${item}-${i}`}
-                status={status[i]}
-                onPress={onPress(i)}
-                content={item}
-                next={next}
-              />
-            ))}
-          </Box>
-        </VStack>
+      </Box>
+
+      {/* Câu hỏi */}
+      <Box bg="$white" borderRadius={20} px="$4" py="$4" mb="$4">
+        <Text
+          fontSize="$lg"
+          fontWeight="700"
+          color="$textDark800"
+          textAlign="center"
+        >
+          {quizzes[currQues].ques}
+        </Text>
+      </Box>
+
+      {/* Đáp án */}
+      <VStack gap="$3" mb="$8">
+        {quizzes[currQues].choose.map((item: string, i: number) => (
+          <TextBox
+            key={`${item}-${i}`}
+            status={status[i]}
+            onPress={onPress(i)}
+            content={item}
+            next={next}
+          />
+        ))}
       </VStack>
-      <Box height={50} px={"$4"} my={"$4"}>
+
+      {/* Nút tiếp tục */}
+      <Box px="$2">
         <Button
           disabled={!next}
-          w={"$full"}
-          rounded={"$xl"}
-          bg="#3758F9"
           onPress={onNext}
+          bg="#2E8B57"
+          py="$3"
+          rounded="$2xl"
           opacity={!next ? 0.5 : 1}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.2,
+            shadowRadius: 4,
+            elevation: 5,
+          }}
         >
-          <Text color="$white">
+          <Text color="$white" fontSize="$md" fontWeight="600">
             {next && currQues === quizzes.length - 1
               ? "Hoàn thành"
               : "Tiếp tục"}
           </Text>
         </Button>
       </Box>
-    </VStack>
+    </ScrollView>
   );
 };
 
 export default QuizzScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    marginTop: 30,
-  },
-  text_main: {
-    color: "#A1783F",
-    fontSize: 30,
-    fontWeight: "bold",
-  },
-  text_level: {
-    color: "#3D7944",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  btn__stop: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#3D7944",
-    borderWidth: 1,
-    borderRadius: 10,
-    marginHorizontal: 5,
-  },
-  btn__continue: {
-    backgroundColor: "#3D7944",
-    borderRadius: 10,
-    marginHorizontal: 5,
-  },
-});

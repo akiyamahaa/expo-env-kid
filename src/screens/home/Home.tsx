@@ -43,7 +43,7 @@ const Home = (props: Props) => {
       <VStack flex={1} p={"$4"} gap={"$4"} bg="$white">
         <HStack justifyContent="space-between" mb={"$4"}>
           <Text fontWeight="$semibold" fontSize={"$3xl"} color="$primary600">
-            EcoAlert
+            EcoKids
           </Text>
         </HStack>
       </VStack>
