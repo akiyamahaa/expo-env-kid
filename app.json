@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-template",
-    "slug": "expo-template",
+    "name": "EcoKids",
+    "slug": "ecokids",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,8 +29,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "44fc26b5-7003-4ef0-baaf-166c61209456"
+        "projectId": "a3708617-008c-43d8-a807-11c82b2825b1"
       }
-    }
+    },
+    "owner": "quangakiyama"
   }
 }

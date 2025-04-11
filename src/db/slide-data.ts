@@ -232,7 +232,7 @@ export const basic: IObjectData = {
           "Thiên văn học: Ánh sáng nền làm giảm khả năng quan sát thiên văn, gây khó khăn cho các nhà thiên văn học và người yêu thích quan sát bầu trời đêm.",
           "Kinh tế: Chi phí năng lượng tăng cao do sử dụng ánh sáng không hiệu quả. Ô nhiễm ánh sáng cũng có thể làm giảm giá trị bất động sản trong các khu vực bị ảnh hưởng.",
         ],
-        image: require("../assets/env/light3.png"),
+        image: require("../assets/env/light4.jpg"),
       },
       {
         title: "Biện pháp kiểm soát và phòng ngừa ô nhiễm ánh sáng:",
