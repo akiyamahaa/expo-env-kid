@@ -10,6 +10,7 @@ export interface IData {
   image: ImageSourcePropType;
   title: string;
   description: string;
+  category?: string;
   content: Array<{
     title: string;
     body: string[];

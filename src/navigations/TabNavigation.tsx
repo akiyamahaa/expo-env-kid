@@ -7,7 +7,7 @@ import { BottomTabsParams } from "./config";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Quizz from "../screens/quizz-mode/Quizz";
 import Practice from "../screens/practice/Practice";
-import Puzzle from "../screens/puzzle/Puzzle";
+import Activity from "../screens/activity/Activity";
 import { UseTokenColor } from "../hook/UseTokenColor";
 
 const Tab = createBottomTabNavigator<BottomTabsParams>();
@@ -73,10 +73,10 @@ export const TabData: ITabData[] = [
   },
   {
     id: 4,
-    tabName: "Puzzle",
+    tabName: "Activity",
     title: "Câu chuyện",
     iconName: "extension-puzzle",
-    component: Puzzle,
+    component: Activity,
     headerShown: true,
   },
 ];
