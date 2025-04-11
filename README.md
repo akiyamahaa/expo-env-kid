@@ -1,51 +1,87 @@
-# Earth Guardian
+# **EcoKids – Environmental Education for Children 🌱🌏**
 
-## Demo App
-<!-- Link Vid Demo -->
+**EcoKids** – A fun and interactive app that teaches children how to love and protect the environment through lessons, games, and stories! 🧒👧🌍
 
-## Table of Contents
-- [Earth Guardian](#earth-guardian)
-  - [Demo App](#demo-app)
-  - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [Features](#features)
-  - [Screenshots](#screenshots)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
+With **EcoKids**, kids will:
+- 📚 Learn about nature and sustainability.
+- 🎮 Play fun, eco-themed games.
+- 🧩 Explore creative green activities.
+- 📖 Enjoy engaging stories about the environment.
 
-## About
-<!-- App description -->
+Let’s raise a generation of little Earth heroes! 💚🌎
 
-## Features
-<!-- Your features app -->
+## [DEMO - DRIVE LINK](https://your-demo-link-here.com)  
+## [DOWNLOAD APK](https://your-apk-link-here.com)
 
-## Screenshots
-<!-- Screenshot image of some screen and place in ~/images folder from root app -->
-<img src="images/image_demo1.png" width="40%" style="inline-block" alt='screen1'>
-<img src="images/image_demo2.png" width="40%" style="inline-block" alt='screen2'>
-<img src="images/image_demo3.png" width="40%" style="inline-block" alt='screen3'>
-<img src="images/image_demo4.png" width="40%" style="inline-block" alt='screen4'>
-<img src="images/image_demo5.png" width="40%" style="inline-block" alt='screen5'>
-<img src="images/image_demo6.png" width="40%" style="inline-block" alt='screen6'>
+---
+
+## Key Features
+
+### 🟢 **Onboard Screens – A Friendly Green Welcome**
+- 🌿 Greeted with cheerful animations and friendly characters.
+- 🌍 Introduction to the app’s mission: protecting the planet together!
+  
+<div style="display: flex; justify-content: left;">
+  <img src="./src/assets/readme/onboard1.png" width="32%" />
+  <img src="./src/assets/readme/onboard2.png" width="32%" />
+  <img src="./src/assets/readme/onboard3.png" width="32%" />
+</div>
 
 
-## Getting Started
+---
 
-### Prerequisites
+### 📘 **Lessons – Learn About the Environment**
+- 🐝 Discover topics like recycling, saving water, protecting wildlife, and more.
+- 🎓 Simple visuals and quizzes tailored for kids aged 4–10.
+- 📊 Progress tracking to reward learning.
 
-- Node.Js: https://nodejs.org/en
-- Expo: https://docs.expo.dev/get-started/installation/
-- Yarn: https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable
+<div style="display: flex; justify-content: left;">
+  <img src="./src/assets/readme/lesson1.png" width="32%" />
+  <img src="./src/assets/readme/lesson2.png" width="32%" />
+</div>
 
-### Installation
+---
 
-- Clone the repository to your local machine
-- Install dependencies using npm or yarn
-- Run the app using `yarn start` or another suitable command
+### 🎮 **Games – Play and Learn**
+- ♻️ **Sort the Trash** – Help clean up by putting waste in the right bin.
+- 🐢 **Ocean Rescue** – Save sea animals by cleaning up plastic pollution.
+- ❓ **Eco Quiz** – Test your green knowledge and level up!
 
-```bash
-git clone <git url app>
-cd app_name
-yarn
-yarn start
+<div style="display: flex; justify-content: left;">
+  <img src="./src/assets/readme/game1.png" width="32%" />
+  <img src="./src/assets/readme/game2.png" width="32%" />
+  <img src="./src/assets/readme/game3.png" width="32%" />
+</div>
+
+---
+
+### 🎨 **Activities – Fun in Real Life**
+- 🌱 Grow a plant and track its progress with photos.
+- 🔁 Complete daily eco-challenges: turn off the lights, reuse paper, etc.
+- 🖐️ DIY crafts using recycled materials.
+
+<div style="display: flex; justify-content: left;">
+  <img src="./src/assets/readme/activity1.png" width="32%" />
+  <img src="./src/assets/readme/activity2.png" width="32%" />
+</div>
+
+---
+
+### 📚 **Environmental Stories – Learn Through Tales**
+- 📖 Read or listen to short, inspiring stories about nature, animals, and young heroes saving the Earth.
+- 🧡 Stories with a moral, helping build eco-awareness and empathy.
+
+<div style="display: flex; justify-content: left;">
+  <img src="./src/assets/readme/story1.png" width="32%" />
+  <img src="./src/assets/readme/story2.png" width="32%" />
+</div>
+
+---
+
+## 🛠️ Technology Stack
+
+- **React Native** – Cross-platform mobile app development.
+- **Firebase** – Authentication, real-time database, and analytics.
+- **Lottie Animations** – Smooth and fun animations for a kid-friendly feel.
+
+---
